@@ -209,17 +209,17 @@ class cache:
     
       return optAlbumItemList
 
-   def getGenreList( self ,artist = None ) :
+   def getGenreList( self ,artist = None,string =None ) :
      
       conn = self.connectDB()
       c    = conn.cursor()
               
       if artist == None : 
-         c.execute( """ SELECT distinct genre FROM CachedList 
- 		       ORDER BY genre """) 
+         c.execute( """ SELECT distinct genre FROM CachedList WHERE genre LIKE "%{0}%" 
+ 		       ORDER BY genre """.format(string)) 
       else :
-         c.execute( """ SELECT distinct genre FROM CachedList WHERE artist = "{0}"
-                       ORDER BY genre """.format(artist))
+         c.execute( """ SELECT distinct genre FROM CachedList WHERE artist = "{0}" AND genre LIKE "%{0}%"
+                       ORDER BY genre """.format(artist,string))
       
       genrelist = []
       for row in c :
@@ -231,17 +231,17 @@ class cache:
 
 
 
-   def getArtistList( self ,genre = None ) :
+   def getArtistList( self ,genre = None , string = None ) :
      
       conn = self.connectDB()
       c    = conn.cursor()
               
       if genre == None : 
          c.execute( """ SELECT distinct artist FROM CachedList 
- 		       ORDER BY artist """) 
+ 		        WHERE artist LIKE "%{0}%"ORDER BY artist """.format(string)) 
       else :
-         c.execute( """ SELECT distinct artist FROM CachedList WHERE genre = "{0}"
-                       ORDER BY artist """.format(genre))
+         c.execute( """ SELECT distinct artist FROM CachedList WHERE genre = "{0}" AND  artist LIKE "%{1}%" 
+                       ORDER BY artist """.format(genre,string))
       
       artistlist = []
       for row in c :
@@ -249,13 +249,13 @@ class cache:
     
       return artistlist
 
-   def getSongItemList( self ,album ) :
+   def getSongItemList( self ,album , string ) :
      
       conn = self.connectDB()
       c    = conn.cursor()
                
       c.execute( """ SELECT filename,title,image_path FROM CachedList 
- 		     WHERE album = "{0}" ORDER BY title """.format(album)) 
+ 		     WHERE album = "{0}" AND title LIKE "%{1}%" ORDER BY title """.format(album,string)) 
       
       songitemlist = []
       for row in c :
