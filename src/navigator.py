@@ -27,6 +27,13 @@ class navi(QtGui.QWidget):
     def test(self,name):
        print name
 
+    def getText(self):
+       return self.ui.lineEdit.text()
+
+    def refresh(self):
+       self.ui.lineEdit.setText("")
+
+
 
 
 if __name__ == "__main__":

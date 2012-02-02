@@ -2,6 +2,16 @@ import sys,os
 from PyQt4 import QtGui,QtCore
 import playerdone
 import navigator
+import albumItemListWidget
+import songItemListWidget
+import cache1
+import stack
+import JBlistWidget
+
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
 
 
 
@@ -21,14 +31,52 @@ class Main(QtGui.QGraphicsView):
 		#self.bgbrush.setTexture(self.bg)
 		self.graphicsscene.setSceneRect(0,0,self.width-50,self.height-60)
 		self.setBackgroundBrush(self.bgbrush)
-		self.player = playerdone.PlayerWidget()
-		self.navigator = navigator.navi()
+
+		
+
+		self.cac = cache1.cache() 
+   		self.albumlist = self.cac.getAlbumItemList(None,None,'')
+                self.songlist = self.cac.getSongItemList(" ")
+   		li = [('kio','lop'),('kol','koi')]
+
+#################################################################################################
+
+		self.albumGrid = albumItemListWidget.albumItemListWidget(self.albumlist)
+                self.songGrid = songItemListWidget.songItemListWidget(self.songlist)
+                self.JBListItem = JBlistWidget.JBlist(["hui"])
+
+                self.player = playerdone.PlayerWidget()
+		
+                self.navigator = navigator.navi()
+                
+                self.artistButton =  QtGui.QPushButton('                       ')
+		self.artistButton.setStyleSheet(_fromUtf8("background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:0.558909, y2:0.0514091, stop:0 rgba(0, 0, 0, 100), stop:1 rgba(255, 255, 255, 100));\n"
+"font: 18pt \"Arial Black\";\n"
+"color: rgb(255, 255, 255);"))
+                self.genreButton =  QtGui.QPushButton('                       ')
+		self.genreButton.setStyleSheet(_fromUtf8("background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:0.558909, y2:0.0514091, stop:0 rgba(0, 0, 0, 100), stop:1 rgba(255, 255, 255, 100));\n"
+"font: 18pt \"Arial Black\";\n"
+"color: rgb(255, 255, 255);"))
+                self.scanButton =  QtGui.QPushButton('                       ')
+		self.scanButton.setStyleSheet(_fromUtf8("background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:0.558909, y2:0.0514091, stop:0 rgba(0, 0, 0, 100), stop:1 rgba(255, 255, 255, 100));\n"
+"font: 18pt \"Arial Black\";\n"
+"color: rgb(255, 255, 255);"))
+                self.stack = stack.stackBar()                 
+
+		self.albumGrid.updatelist(self.albumlist)
 		self.nbutton = QtGui.QPushButton('                                       ')
 		self.graphicsscene.addWidget(self.player)
 		self.graphicsscene.addWidget(self.navigator)
 		self.graphicsscene.addWidget(self.nbutton)
+		self.graphicsscene.addWidget(self.albumGrid)
+		self.graphicsscene.addWidget(self.artistButton)
+		self.graphicsscene.addWidget(self.stack)
+		self.graphicsscene.addWidget(self.genreButton)
+		self.graphicsscene.addWidget(self.scanButton)
 		self.setupStateMachine()
 		#self.setScene(self.graphicsscene)
+
+######################################################################################################
 
 	def setupStateMachine(self):
 		self.machine = QtCore.QStateMachine()
@@ -39,33 +87,54 @@ class Main(QtGui.QGraphicsView):
 		#self.machine.setInitialState(statei)
 
 		statei.assignProperty(self.nbutton,"text","Show Navigation Pad")
+		statei.assignProperty(self.artistButton,"text","Artist")
+		statei.assignProperty(self.genreButton,"text","Genre")
+		statei.assignProperty(self.scanButton,"text","Scan")
 		statei.assignProperty(self.player,"geometry",QtCore.QRect((self.width/4),0,400,50))
 		statei.assignProperty(self.nbutton,"geometry",QtCore.QPoint(0,0))
-		statei.assignProperty(self.navigator,"geometry",QtCore.QRect(self.width,self.height,500,500))
+		statei.assignProperty(self.artistButton,"pos",QtCore.QPoint(0,45))
+		statei.assignProperty(self.genreButton,"pos",QtCore.QPoint(0,90))
+		statei.assignProperty(self.scanButton,"pos",QtCore.QPoint(0,135))
+		statei.assignProperty(self.stack,"geometry",QtCore.QRect(0,250,225,450))	
+		statei.assignProperty(self.navigator,"geometry",QtCore.QRect((self.width)-380,(self.height/2)-375,380,800))
 		statei.assignProperty(self.player,"opacity",1.0)
+		
 		statei.assignProperty(self.nbutton,"opacity",1.0)
-		statei.assignProperty(self.navigator,"opacity",0.0)
+		statei.assignProperty(self.navigator,"opacity",1.0)
+		statei.assignProperty(self.albumGrid,"opacity",1.0)
+		statei.assignProperty(self.albumGrid,"geometry",QtCore.QRect((self.width/4)-100,300,750,400))
 
 		statef.assignProperty(self.nbutton,"text","Show Player")
+		statef.assignProperty(self.artistButton,"text","Artist")
+		statef.assignProperty(self.genreButton,"text","Genre")
+		statef.assignProperty(self.scanButton,"text","Scan")
 		statef.assignProperty(self.navigator,"geometry",QtCore.QRect((self.width)-380,(self.height/2)-375,380,800))
-		statef.assignProperty(self.nbutton,"geometry",QtCore.QPoint(0,0))
-		statef.assignProperty(self.player,"geometry",QtCore.QRect(0,self.height,400,150))
+		statef.assignProperty(self.nbutton,"pos",QtCore.QPoint(0,0))
+		statef.assignProperty(self.artistButton,"pos",QtCore.QPoint(0,45))
+		statef.assignProperty(self.genreButton,"pos",QtCore.QPoint(0,90))
+		statef.assignProperty(self.scanButton,"pos",QtCore.QPoint(0,135))
+		statef.assignProperty(self.stack,"geometry",QtCore.QRect(0,250,225,450))	
+		statef.assignProperty(self.player,"geometry",QtCore.QRect((self.width/4),-400,400,150))
 		statef.assignProperty(self.player,"opacity",0.0)
+				
 		statef.assignProperty(self.nbutton,"opacity",1.0)
 		statef.assignProperty(self.navigator,"opacity",1.0)
-
+		statef.assignProperty(self.albumGrid,"opacity",1.0)
+		statef.assignProperty(self.albumGrid,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		
 		
 		t1 = statei.addTransition(self.nbutton.clicked,statef)
 		 
-		t1.addAnimation(QtCore.QPropertyAnimation(self.navigator,"geometry",statei))
+		#t1.addAnimation(QtCore.QPropertyAnimation(self.navigator,"geometry",statei))
 		t1.addAnimation(QtCore.QPropertyAnimation(self.nbutton,"geometry",statei))
-		t1.addAnimation(QtCore.QPropertyAnimation(self.navigator,"opacity",statei))
+		#t1.addAnimation(QtCore.QPropertyAnimation(self.navigator,"opacity",statei))
+		t1.addAnimation(QtCore.QPropertyAnimation(self.albumGrid,"geometry",statei))
 		
 		t2 = statef.addTransition(self.nbutton.clicked,statei)
 		t2.addAnimation(QtCore.QPropertyAnimation(self.player,"geometry",statef))
 		t2.addAnimation(QtCore.QPropertyAnimation(self.nbutton,"geometry",statef))
 		t2.addAnimation(QtCore.QPropertyAnimation(self.player,"opacity",statef))
+		t2.addAnimation(QtCore.QPropertyAnimation(self.albumGrid,"geometry",statef))
 
 		#self.machine.addState(statei)
 		#self.machine.addState(statef)
