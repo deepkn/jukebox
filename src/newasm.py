@@ -16,7 +16,10 @@ except AttributeError:
 
 
 class Main(QtGui.QGraphicsView):
-	def __init__(self):
+	
+        state = 1
+         
+        def __init__(self):
 		super(QtGui.QGraphicsView,self).__init__()
 		self.initUi()
 
@@ -26,7 +29,7 @@ class Main(QtGui.QGraphicsView):
 		self.width = self.screen.width()
 		self.height = self.screen.height()
 		self.graphicsscene = QtGui.QGraphicsScene(self)
-		self.bg = QtGui.QPixmap("/home/deepak/Downloads/bg4.jpg")
+		self.bg = QtGui.QPixmap("/home/nikhcc/mp3.jpg")
 		self.bgbrush = QtGui.QBrush(self.bg)
 		#self.bgbrush.setTexture(self.bg)
 		self.graphicsscene.setSceneRect(0,0,self.width-50,self.height-60)
@@ -34,12 +37,14 @@ class Main(QtGui.QGraphicsView):
 
                 self.artistlistopen = False
                 self.genrelistopen  = False
+                self.songlistopen   = False
                 self.listslotvalidity  = True
-		
+		self.albumlistopen = True
+       
 
 		self.cache = cache1.cache() 
    		self.albumlist = self.cache.getAlbumItemList(None,None,'')
-                self.songlist = self.cache.getSongItemList(" ")
+                self.songlist = self.cache.getSongItemList(" ","")
    		li = [('kio','lop'),('kol','koi')]
 
 #################################################################################################
@@ -82,9 +87,6 @@ class Main(QtGui.QGraphicsView):
 		self.graphicsscene.addWidget(self.genreButton)
 		self.graphicsscene.addWidget(self.scanButton)
 		self.setupStateMachine()
-		#self.setScene(self.graphicsscene)
-
-######################################################################################################
 	
 	def setupStateMachine(self):
 		self.machine = QtCore.QStateMachine()
@@ -95,7 +97,16 @@ class Main(QtGui.QGraphicsView):
 		state_final_wp = QtCore.QState(self.machine)
 		state_final_wop = QtCore.QState(self.machine)
 		
+                self.connect(state_initial_wop ,QtCore.SIGNAL('propertiesAssigned ()'),self.getStateSlot1)
+		self.connect(state_initial_wp ,QtCore.SIGNAL('propertiesAssigned ()'),self.getStateSlot2)
+		self.connect(state_inter_wop ,QtCore.SIGNAL('propertiesAssigned ()'),self.getStateSlot3)
+		self.connect(state_inter_wp ,QtCore.SIGNAL('propertiesAssigned ()'),self.getStateSlot4)
+		self.connect(state_final_wop ,QtCore.SIGNAL('propertiesAssigned ()'),self.getStateSlot5)
+		self.connect(state_final_wp ,QtCore.SIGNAL('propertiesAssigned ()'),self.getStateSlot6)
+
+
 		#initial state with player
+                state_initial_wop.assignProperty(self,"state",2)
 		state_initial_wp.assignProperty(self.nbutton,"text","Hide Player")
 		state_initial_wp.assignProperty(self.artistButton,"text","Artist")
 		state_initial_wp.assignProperty(self.genreButton,"text","Genre")
@@ -119,6 +130,7 @@ class Main(QtGui.QGraphicsView):
 		state_initial_wp.assignProperty(self.JBListItem,"visible",0.0)
 
 		#initial state without player
+                state_initial_wop.assignProperty(self,"state",2)
 		state_initial_wop.assignProperty(self.nbutton,"text","Show Player")
 		state_initial_wop.assignProperty(self.artistButton,"text","Artist")
 		state_initial_wop.assignProperty(self.genreButton,"text","Genre")
@@ -142,6 +154,7 @@ class Main(QtGui.QGraphicsView):
 		state_initial_wop.assignProperty(self.JBListItem,"visible",0.0)
 		
 		#intermediate state with player
+                state_initial_wop.assignProperty(self,"state",2)
 		state_inter_wp.assignProperty(self.nbutton,"text","Hide Player")
 		state_inter_wp.assignProperty(self.artistButton,"text","Artist")
 		state_inter_wp.assignProperty(self.genreButton,"text","Genre")
@@ -165,6 +178,7 @@ class Main(QtGui.QGraphicsView):
 		state_inter_wp.assignProperty(self.JBListItem,"visible",1.0)
 
 		#intermediate state without player
+                state_initial_wop.assignProperty(self,"state",2)
 		state_inter_wop.assignProperty(self.nbutton,"text","Show Player")
 		state_inter_wop.assignProperty(self.artistButton,"text","Artist")
 		state_inter_wop.assignProperty(self.genreButton,"text","Genre")
@@ -188,6 +202,7 @@ class Main(QtGui.QGraphicsView):
 		state_inter_wop.assignProperty(self.JBListItem,"visible",1.0)
 
 		#final state with player
+                state_initial_wop.assignProperty(self,"state",2)
 		state_final_wp.assignProperty(self.nbutton,"text","Hide Player")
 		state_final_wp.assignProperty(self.artistButton,"text","Artist")
 		state_final_wp.assignProperty(self.genreButton,"text","Genre")
@@ -298,15 +313,14 @@ class Main(QtGui.QGraphicsView):
 
 		
 
-##################################################33
-
 
 
 	def artistslot(self):
-	      print " artist slot begin"
+	      print " artist slot begin    state = " 
+              print self.state
 	      self.artistlistopen = True
 	      stackstate = self.stack.getState()
-	      self.k = self.cache.getArtistList(stackstate["genre"])
+	      self.k = self.cache.getArtistList(stackstate["genre"],self.navigator.getText())
 	      self.listslotvalidity  = False
 	      self.JBListItem.updatelist(self.k)# thinks signal is genrated inside this...
 	      self.listslotvalidity  = True
@@ -324,7 +338,7 @@ class Main(QtGui.QGraphicsView):
 	      self.genrelistopen = True
 	   
 	      stackstate = self.stack.getState()
-	      self.k = self.cache.getGenreList(stackstate["artist"])
+	      self.k = self.cache.getGenreList(stackstate["artist"],self.navigator.getText())
 	      
 	         
 	      self.listslotvalidity  = False
@@ -343,19 +357,19 @@ class Main(QtGui.QGraphicsView):
 	
 
    	 
-	#def backslot(self):
+	def backslot(self):
 	      #print " back slot beg"
-	      #if self.artistlistopen == True :
-	       #  self.artistlistopen = False        
-	      #else :
-	       #  self.genrelistopen = False
+	      if self.artistlistopen == True :
+	         self.artistlistopen = False        
+	      else :
+	         self.genrelistopen = False
 	      #self.JBListItem.close()
 	      #self.genreButton.show()
 	      #self.scanButton.show()  
 	      #self.artistButton.show()
-	     # self.buttons.backButton.close()
+	      #self.buttons.backButton.close()
 	      
-	     # print " back slot  ends"
+	      #print " back slot  ends"
 	     
 	def listslot(self) :
 	      print " list slot begin"
@@ -389,30 +403,48 @@ class Main(QtGui.QGraphicsView):
 	      #self.albumGrid.close()
 	
 	   
-	########## algo ###################
+        def refresh(self):		
+	       stackstate = self.stack.getState()
+ 	       albumlist  = self.cache.getAlbumItemList(stackstate["genre"],stackstate["artist"],self.navigator.getText())
+               self.albumGrid.updatelist(albumlist)
+               print "refresh"
+
+        def getStateSlot1(self):
+             self.state = 1
+             self.navigator.refresh() 
+        
+        def getStateSlot2(self):
+             self.state = 2   
+        
+        def getStateSlot3(self):
+             self.state = 3
+             self.navigator.refresh()
+        
+        def getStateSlot4(self):
+             self.state = 4
+
+        def getStateSlot5(self):
+             self.state = 5
+             self.navigator.refresh()
+      
+        def getStateSlot6(self):
+             self.state = 6
  
-        def refresh(self):
-	    stackstate = self.stack.getState()
- 	    albumlist  = self.cache.getAlbumItemList(stackstate["genre"],stackstate["artist"],self.navigator.getText())
-            self.albumGrid.updatelist(albumlist)
-            print "refresh"
 
 
-
-
-
-
-
-##################################################3
-
-
-
-
-
-		
-		
-
-
+        def navigatorTextSlot(self,name):
+	     print " navigator "+ name
+             print self.state
+             if(self.state == 1 or self.state == 2):			
+                 self.refresh()    
+             if(self.state == 2 or self.state == 3):			
+                 if(self.genrelistopen == True):
+                    self.genreslot()
+                 else:
+                    self.artistslot()   
+             
+               
+          
 if __name__ == '__main__':
 	app = QtGui.QApplication(sys.argv)
 	app.setApplicationName('JukeBox')
@@ -420,11 +452,13 @@ if __name__ == '__main__':
 ###########################################3
 
         app.connect(q.artistButton ,QtCore.SIGNAL('clicked()'),q.artistslot)
-   	app.connect(q.genreButton ,QtCore.SIGNAL('clicked()'),q.genreslot)
+        app.connect(q.genreButton ,QtCore.SIGNAL('clicked()'),q.genreslot)
    	#app.connect(q.backButton ,QtCore.SIGNAL('pressed()'),q.backslot)
+
         app.connect(q.JBListItem ,QtCore.SIGNAL('itemSelectionChanged ()'),q.listslot)
         app.connect(q.stack ,QtCore.SIGNAL('updated'),q.refresh)
         app.connect(q.albumGrid , QtCore.SIGNAL('selected(PyQt_PyObject)'),q.albumslot)
+        app.connect(q.navigator , QtCore.SIGNAL('textChanged(PyQt_PyObject)'),q.navigatorTextSlot)
 
 ##############################################	
 
