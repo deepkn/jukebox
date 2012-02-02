@@ -84,10 +84,10 @@ class JBMainWidget(QtGui.QWidget):
      
       self.listWidget.show()
     
-      self.buttons.artistButton.close()
-      self.buttons.genreButton.close()
-      self.buttons.scanButton.close()
-      self.buttons.backButton.show()
+      self.artistButton.close()
+      self.genreButton.close()
+      self.scanButton.close()
+      #self.buttons.backButton.show()
       print " genre slot ends" 
           
 
@@ -100,10 +100,9 @@ class JBMainWidget(QtGui.QWidget):
       else :
          self.genrelistopen = False
       self.listWidget.close()
-      self.buttons.genreButton.show()
-      self.buttons.scanButton.show()  
-      self.buttons.artistButton.show()
-      self.buttons.backButton.close()
+      self.genreButton.show()
+      self.scanButton.show()  
+      self.artistButton.show()
       
       print " back slot  ends"
      
@@ -145,7 +144,7 @@ class JBMainWidget(QtGui.QWidget):
  
    def refresh(self):
       stackstate = self.stackbar.getState()
-      albumlist  = self.cach.getAlbumItemList(stackstate["genre"],stackstate["artist"])
+      albumlist  = self.cach.getAlbumItemList(stackstate["genre"],stackstate["artist"],self.navigator.getText())
       self.albumListview.updatelist(albumlist)
       print "refresh"
    
@@ -159,6 +158,7 @@ class JBMainWidget(QtGui.QWidget):
 if __name__ == "__main__":
    app = QtGui.QApplication(sys.argv)
    ob = JBMainWidget()
+ 
    app.connect(ob.buttons.artistButton ,QtCore.SIGNAL('pressed()'),ob.artistslot)
    app.connect(ob.buttons.genreButton ,QtCore.SIGNAL('pressed()'),ob.genreslot)
    app.connect(ob.buttons.backButton ,QtCore.SIGNAL('pressed()'),ob.backslot)

@@ -4,46 +4,67 @@ from cache1 import *
 import song
 from albumItemWidget1 import *
 
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+
 class albumItemGrid(QtGui.QWidget):  
+
+  selected = QtCore.pyqtSignal(str)
+
   def __init__(self,albumItemList):
     QtGui.QWidget.__init__(self)
     self.layout = QtGui.QGridLayout(self)  
     i = 0   
     for albumItem in albumItemList :
        albumItemWidgetObject = albumItemWidget(albumItem[0],albumItem[1])
-       self.layout.addWidget(albumItemWidgetObject,i/5,i%5)
-       self.connect(albumItemWidgetObject,QtCore.SIGNAL('selected(PyQt_PyObject)'),self.selected)     
+       albumItemWidgetObject.setStyleSheet("background: transparent;")
+       self.layout.addWidget(albumItemWidgetObject,i/4,i%4)
+       self.connect(albumItemWidgetObject,QtCore.SIGNAL('selected(PyQt_PyObject)'),self.selectedSlot)     
        i = i + 1
     
-  def selected(self,albumname):
-     self.emit(QtCore.SIGNAL("selected(PyQt_PyObject)"),albumname)
+  def selectedSlot(self,albumname):
+     self.selected.emit(albumname)
+     #self.emit(QtCore.SIGNAL("selected(PyQt_PyObject)"),albumname)
      print "kol"
 
 class albumItemListWidget(QtGui.QWidget):
+   
+  selected = QtCore.pyqtSignal(str)
+
   def __init__(self, albumItemList):
      QtGui.QWidget.__init__(self)
      self.layout = QtGui.QGridLayout(self)
      sk =  QtGui.QScrollArea()
      #self.scrolarea = QtGui.QScrollArea()
      self.ob = albumItemGrid(albumItemList)
+     self.ob.setStyleSheet("background: transparent;")
      sk.setWidget(self.ob)
      self.scrolarea = sk
+     self.scrolarea.setObjectName(_fromUtf8("scroll"))
+     self.scrolarea.setStyleSheet(_fromUtf8("#scroll{background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:0.558909, y2:0.0514091, stop:0 rgba(0, 0, 0, 40), stop:1 rgba(255, 255, 255, 40));}\n"))
      sk.close()
+     self.setObjectName(_fromUtf8("widget"))
      self.layout.addWidget(self.scrolarea)
-     self.setGeometry(400,400,1000,500) 
-     self.connect(self.ob,QtCore.SIGNAL('selected(PyQt_PyObject)'),self.selected)
+     self.setGeometry(400,400,700,500)
+     self.setStyleSheet(_fromUtf8("#widget{background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:0.558909, y2:0.0514091, stop:0 rgba(0, 0, 0, 100), stop:1 rgba(255, 255, 255, 100));}\n"))
+     self.connect(self.ob,QtCore.SIGNAL('selected(PyQt_PyObject)'),self.selectedSlot)
   
   def updatelist(self,albumItemList):
      self.scrolarea.close()
      self.ob = albumItemGrid(albumItemList)
      sk =  QtGui.QScrollArea()
-     
+     self.ob.setStyleSheet("background: transparent;")
      sk.setWidget(self.ob)
      self.scrolarea = sk
+     self.scrolarea.setObjectName(_fromUtf8("scroll"))
+     self.scrolarea.setStyleSheet(_fromUtf8("#scroll{background-color: qlineargradient(spread:reflect, x1:0, y1:0, x2:0.558909, y2:0.0514091, stop:0 rgba(0, 0, 0, 40), stop:1 rgba(255, 255, 255, 40));}\n"))
      self.layout.addWidget(self.scrolarea)
 
-  def selected(self,albumname):
-     self.emit(QtCore.SIGNAL("selected(PyQt_PyObject)"),albumname)
+  def selectedSlot(self,albumname):
+     #self.emit(QtCore.SIGNAL("selected(PyQt_PyObject)"),albumname)
+     self.selected.emit(albumname)
      print "op  " + albumname
     
 if __name__ == "__main__":

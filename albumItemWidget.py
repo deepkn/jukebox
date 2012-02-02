@@ -15,7 +15,7 @@ class albumItemWidget(QtGui.QWidget):
       self.albumLabel  = QtGui.QLabel(album)
       self.albumart = QtGui.QPixmap(image)
       self.imageLabel = QtGui.QLabel()
-      self.imageLabel.setPixmap(self.albumart.scaled(150,150))
+      self.imageLabel.setPixmap(self.albumart.scaled(200,200))
       self.labelLayout.addWidget( self.imageLabel)
       self.labelLayout.addWidget(self.albumLabel)
 

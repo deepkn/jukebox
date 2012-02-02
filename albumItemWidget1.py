@@ -4,24 +4,39 @@ from PyQt4 import QtGui,QtCore
 import song
 import ClickableLabel
 
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
+
 
 class albumItemWidget(QtGui.QWidget):
   
+   selected = QtCore.pyqtSignal(str)
+
    def __init__(self,album,image):    
       QtGui.QWidget.__init__(self)
       self.label = album
-      self.setGeometry(300,300,150,150)
-      self.setMaximumSize(150,150)
+      self.setObjectName((_fromUtf8("topwidget")))
+      self.setGeometry(300,300,250,175) # size position
+      self.setMaximumSize(250,175)
+      self.setStyleSheet(_fromUtf8("#topwidget{background-color: rgba(255,255,255,0);}"))
       self.labelLayout = QtGui.QVBoxLayout(self)
       self.albumLabel  = QtGui.QLabel(album)
+      self.albumLabel.setObjectName((_fromUtf8("album")))
+      self.albumLabel.setStyleSheet((_fromUtf8("#album{font: 12pt \"Arial Black\";\n"
+ 						       "color: rgb(255, 255, 255);}")))							
       self.albumart = QtGui.QPixmap(image)
       self.imageLabel = ClickableLabel.ClickableQLabel(self)
-      self.imageLabel.setPixmap(self.albumart.scaled(150,150))  # set this as pushbutton or any clickable
-      self.labelLayout.addWidget( self.imageLabel)#
+      self.imageLabel.setPixmap(self.albumart.scaled(150,150))
+      #self.imageLabel.setObjectName((_fromUtf8("imagelabel")))
+      #self.imageLabel.setStyleSheet((_fromUtf8("#imagelabel{background-color: rgba(255,255,255,0);}")))
+      self.labelLayout.addWidget( self.imageLabel)
       self.labelLayout.addWidget(self.albumLabel)
-      self.connect(self.imageLabel,QtCore.SIGNAL('clicked()'),self.selected)
+      self.connect(self.imageLabel,QtCore.SIGNAL('clicked()'),self.selectedSlot)
       self.connect(self.imageLabel,QtCore.SIGNAL('pressed()'),self.zoomin)     
-     # self.connect(self,QtCore.SIGNAL('selected(PyQt_PyObject)'),self.kol)     
+     # self.connect(self,QtCore.SIGNAL('selected(PyQt_PyObject)'),self.kol)  
+      self.setStyleSheet("background: transparent;")   
 
    def getalabel(self) :
       return self.label
@@ -37,10 +52,11 @@ class albumItemWidget(QtGui.QWidget):
    def zoomin(self):
       self.imageLabel.setPixmap(self.albumart.scaled(200,200))
          
-   def selected(self):
+   def selectedSlot(self):
       self.imageLabel.setPixmap(self.albumart.scaled(150,150))
       print "selected slot from albumitemwidget "
-      self.emit(QtCore.SIGNAL('selected(PyQt_PyObject)'),self.label)
+      self.selected.emit(self.label)
+      #self.emit(QtCore.SIGNAL('selected(PyQt_PyObject)'),self.label)
       print "ok" + self.label
   
 
