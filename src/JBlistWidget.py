@@ -25,7 +25,7 @@ class JBlist(QtGui.QListWidget):
       self.clear()
       for items in lists :
          self.addItem("\n"+items+"\n")
-      self.setGeometry(400,400,400,500)
+      #self.setGeometry(400,400,400,500)
       #self.setStyleSheet(_fromUtf8("#topwidget{background-color: rgba(255,255,255,0);}"))
 
    
