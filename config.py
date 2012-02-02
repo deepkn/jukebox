@@ -1,7 +1,7 @@
 
 
 
-JukeBox_path = "/home/deepak/JukeBox"
+JukeBox_path = "/home/nikhcc/JukeBox"
 
 
 ###### default settings #########
