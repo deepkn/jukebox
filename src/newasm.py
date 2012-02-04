@@ -175,7 +175,7 @@ class Main(QtGui.QGraphicsView):
 		state_inter_wp.assignProperty(self.JBListItem,"geometry",QtCore.QRect((self.width/4)-100,300,750,400))
 		state_inter_wp.assignProperty(self.JBListItem,"visible",1.0)
 
-		#intermediate state without player
+         #intermediate state without player
                 state_initial_wop.assignProperty(self,"state",2)
 		state_inter_wop.assignProperty(self.nbutton,"text","Show Player")
 		state_inter_wop.assignProperty(self.artistButton,"text","Artist")
@@ -201,7 +201,7 @@ class Main(QtGui.QGraphicsView):
 		state_inter_wop.assignProperty(self.JBListItem,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_inter_wop.assignProperty(self.JBListItem,"visible",1.0)
 
-		#final state with player
+	#final state with player
                 state_initial_wop.assignProperty(self,"state",2)
 		state_final_wp.assignProperty(self.nbutton,"text","Hide Player")
 		state_final_wp.assignProperty(self.artistButton,"text","Artist")
@@ -228,7 +228,7 @@ class Main(QtGui.QGraphicsView):
 		state_final_wp.assignProperty(self.JBListItem,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_final_wp.assignProperty(self.JBListItem,"visible",0.0)
 
-                #final state without player
+        #final state without player
 		state_final_wop.assignProperty(self.nbutton,"text","Show Player")
 		state_final_wop.assignProperty(self.artistButton,"text","Artist")
 		state_final_wop.assignProperty(self.genreButton,"text","Genre")
@@ -254,57 +254,58 @@ class Main(QtGui.QGraphicsView):
 		state_final_wop.assignProperty(self.JBListItem,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_final_wop.assignProperty(self.JBListItem,"visible",0.0)
 
-		#transition1 : state_initial_wp to state_initial_wop
+	#transition1 : state_initial_wp to state_initial_wop
 		t1 = state_initial_wp.addTransition(self.nbutton.clicked,state_initial_wop)
 		t1.addAnimation(QtCore.QPropertyAnimation(self.albumGrid,"geometry",state_initial_wp))
-		#transition2 : state_initial_wop to state_initial_wp
+	#transition2 : state_initial_wop to state_initial_wp
 		t2 = state_initial_wop.addTransition(self.nbutton.clicked,state_initial_wp)
 		t2.addAnimation(QtCore.QPropertyAnimation(self.player,"geometry",state_initial_wop))
 		t2.addAnimation(QtCore.QPropertyAnimation(self.player,"opacity",state_initial_wop))
 		t2.addAnimation(QtCore.QPropertyAnimation(self.albumGrid,"geometry",state_initial_wop))
-		#transition3 : state_inter_wp to state_inter_wop
+	#transition3 : state_inter_wp to state_inter_wop
 		t3 = state_inter_wp.addTransition(self.nbutton.clicked,state_inter_wop)
 		t3.addAnimation(QtCore.QPropertyAnimation(self.JBListItem,"geometry",state_inter_wp))
-		#transition4 : state_inter_wop to state_inter_wp
+	#transition4 : state_inter_wop to state_inter_wp
 		t4 = state_inter_wop.addTransition(self.nbutton.clicked,state_inter_wp)
 		t4.addAnimation(QtCore.QPropertyAnimation(self.player,"geometry",state_inter_wop))
 		t4.addAnimation(QtCore.QPropertyAnimation(self.player,"opacity",state_inter_wop))
 		t4.addAnimation(QtCore.QPropertyAnimation(self.JBListItem,"geometry",state_inter_wop))
-		#transition5 : state_final_wp to state_final_wop
+	#transition5 : state_final_wp to state_final_wop
 		t5 = state_final_wp.addTransition(self.nbutton.clicked,state_final_wop)
 		t5.addAnimation(QtCore.QPropertyAnimation(self.songGrid,"geometry",state_final_wp))
-		#transition6 : state_final_wop to state_final_wp
+	#transition6 : state_final_wop to state_final_wp
 		t6 = state_final_wop.addTransition(self.nbutton.clicked,state_final_wp)
 		t6.addAnimation(QtCore.QPropertyAnimation(self.player,"geometry",state_final_wop))
 		t6.addAnimation(QtCore.QPropertyAnimation(self.player,"opacity",state_final_wop))
 		t6.addAnimation(QtCore.QPropertyAnimation(self.JBListItem,"geometry",state_final_wop))
-		#transition7 : state_initial_wop to state_inter_wop
+	#transition7 : state_initial_wop to state_inter_wop
 		t7 = state_initial_wop.addTransition(self.artistButton.clicked,state_inter_wop)
 		t7g = state_initial_wop.addTransition(self.genreButton.clicked,state_inter_wop)
 		t7.addAnimation(QtCore.QPropertyAnimation(self.albumGrid,"visible",state_initial_wop))
 		t7g.addAnimation(QtCore.QPropertyAnimation(self.albumGrid,"visible",state_initial_wop))
 		t7.addAnimation(QtCore.QPropertyAnimation(self.JBListItem,"visible",state_initial_wop))
 		t7g.addAnimation(QtCore.QPropertyAnimation(self.JBListItem,"visible",state_initial_wop))
-		#transition8 : state_initial_wp to state_inter_wp
+	#transition8 : state_initial_wp to state_inter_wp
 		t8 = state_initial_wp.addTransition(self.artistButton.clicked,state_inter_wp)
 		t8g = state_initial_wp.addTransition(self.genreButton.clicked,state_inter_wp)
 		t8.addAnimation(QtCore.QPropertyAnimation(self.albumGrid,"visible",state_initial_wop))
 		t8g.addAnimation(QtCore.QPropertyAnimation(self.albumGrid,"visible",state_initial_wop))
 		t8.addAnimation(QtCore.QPropertyAnimation(self.JBListItem,"visible",state_initial_wop))
 		t8g.addAnimation(QtCore.QPropertyAnimation(self.JBListItem,"visible",state_initial_wop))
-		#transition9 : state_inter_wop self loop
+	#transition9 : state_inter_wop self loop
 		t9 = state_inter_wop.addTransition(self.artistButton.clicked,state_inter_wop)
 		t9g = state_inter_wop.addTransition(self.genreButton.clicked,state_inter_wop)
-		#transition10 : state_inter_wp self loop
+	#transition10 : state_inter_wp self loop
+	
 		t10 = state_inter_wp.addTransition(self.artistButton.clicked,state_inter_wp)
 		t10g = state_inter_wp.addTransition(self.genreButton.clicked,state_inter_wp)
-		#transition11 : state_inter_wop to state_initial_wop
+	#transition11 : state_inter_wop to state_initial_wop
 		t11 = state_inter_wop.addTransition(self.JBListItem.itemSelectionChanged,state_initial_wop)	
-		#transition12 : state_inter_wp to state_inter_wp
+	#transition12 : state_inter_wp to state_inter_wp
 		t12 = state_inter_wp.addTransition(self.JBListItem.itemSelectionChanged,state_initial_wp)
-		#transition13 : state_initial_wop to state_final_wop
+	#transition13 : state_initial_wop to state_final_wop
 		t13 = state_initial_wop.addTransition(self.albumGrid.selected,state_final_wop)
-                #transition14 : state_initial_wp to state_final_wp
+        #transition14 : state_initial_wp to state_final_wp
                 t14 = state_initial_wp.addTransition(self.albumGrid.selected,state_final_wp)
                 
                 t15 = state_final_wop.addTransition(self.stack.backButtonClicked,state_initial_wop)
@@ -313,31 +314,19 @@ class Main(QtGui.QGraphicsView):
                 
                 
 		self.machine.setInitialState(state_initial_wop)
-
-
 		self.machine.start()
-
 		self.setScene(self.graphicsscene)
 
 
 	def artistslot(self):
-	      print " artist slot begin    state = " 
-              print self.state
 	      self.artistlistopen = True
 	      stackstate = self.stack.getState()
 	      self.k = self.cache.getArtistList(stackstate["genre"],self.navigator.getText())
 	      self.listslotvalidity  = False
 	      self.JBListItem.updatelist(self.k)# thinks signal is genrated inside this...
 	      self.listslotvalidity  = True
-	      #self.JBListItem.show()     
-	      #self.artistButton.close()
-	      #self.genreButton.close()
-	      #self.scanButton.close()
-	      #self.backButton.show()
-	      print " artist slot ends"     
 	         
 	def genreslot(self):
-	      print " genre slot begin"
 	      self.genrelistopen = True	   
 	      stackstate = self.stack.getState()
 	      self.k = self.cache.getGenreList(stackstate["artist"],self.navigator.getText())
@@ -368,7 +357,7 @@ class Main(QtGui.QGraphicsView):
 	      songlist = self.cache.getSongItemList(albumname,self.navigator.getText())
 	      print songlist 
 	      self.songGrid.updatelist(songlist)
-	      self.stack.push("album",albumname)
+	      self.stack.push("album",albumname) #  check   
 	   
         def refresh(self):		
 	       stackstate = self.stack.getState()
@@ -402,12 +391,15 @@ class Main(QtGui.QGraphicsView):
              print self.state
              if(self.state == 1 or self.state == 2):			
                  self.refresh()    
-             if(self.state == 2 or self.state == 3):			
+             if(self.state == 3 or self.state == 4):			
                  if(self.genrelistopen == True):
                     self.genreslot()
                  else:
                     self.artistslot() 
-                    
+             if(self.state == 5 or self.state == 6):
+	         stackstate = self.stack.getState()
+	         self.albumslot(stackstate["album"])
+                 
                     
                     
                       
