@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys,os
 from PyQt4 import QtGui,QtCore
 import playerdone
@@ -51,6 +52,9 @@ class Main(QtGui.QGraphicsView):
 
 		self.albumGrid = albumItemListWidget.albumItemListWidget(self.albumlist)
                 self.songGrid = songItemListWidget.songItemListWidget(self.songlist)
+                
+                self.albumGrid.selected.connect(self.albumslot)
+                
                 self.JBListItem = JBlistWidget.JBlist(["hui"])
 
                 self.player = playerdone.PlayerWidget()
@@ -217,15 +221,16 @@ class Main(QtGui.QGraphicsView):
 		state_final_wp.assignProperty(self.player,"opacity",1.0)
 		state_final_wp.assignProperty(self.nbutton,"opacity",1.0)
 		state_final_wp.assignProperty(self.navigator,"opacity",1.0)
-		state_final_wp.assignProperty(self.albumGrid,"opacity",1.0)
-		state_final_wp.assignProperty(self.albumGrid,"geometry",QtCore.QRect((self.width/4)-100,300,750,400))
-		state_final_wp.assignProperty(self.albumGrid,"visible",0.0)
+		#state_final_wp.assignProperty(self.albumGrid,"opacity",1.0)
+		#state_final_wp.assignProperty(self.albumGrid,"geometry",QtCore.QRect((self.width/4)-100,300,750,400))
+		#state_final_wp.assignProperty(self.albumGrid,"visible",0.0)
 		state_final_wp.assignProperty(self.songGrid,"geometry",QtCore.QRect((self.width/4)-100,300,750,400))
 		state_final_wp.assignProperty(self.songGrid,"visible",1.0)
+                state_final_wp.assignProperty(self.songGrid,"opacity",1.0)
 		state_final_wp.assignProperty(self.JBListItem,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_final_wp.assignProperty(self.JBListItem,"visible",0.0)
 
-		#final state without player
+                #final state without player
 		state_final_wop.assignProperty(self.nbutton,"text","Show Player")
 		state_final_wop.assignProperty(self.artistButton,"text","Artist")
 		state_final_wop.assignProperty(self.genreButton,"text","Genre")
@@ -240,11 +245,12 @@ class Main(QtGui.QGraphicsView):
 		state_final_wop.assignProperty(self.player,"opacity",0.0)
 		state_final_wop.assignProperty(self.nbutton,"opacity",1.0)
 		state_final_wop.assignProperty(self.navigator,"opacity",1.0)
-		state_final_wop.assignProperty(self.albumGrid,"opacity",1.0)
+		state_final_wop.assignProperty(self.albumGrid,"opacity",0.0)
 		state_final_wop.assignProperty(self.albumGrid,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_final_wop.assignProperty(self.albumGrid,"visible",0.0)
 		state_final_wop.assignProperty(self.songGrid,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_final_wop.assignProperty(self.songGrid,"visible",1.0)
+                state_final_wop.assignProperty(self.songGrid,"opacity",1.0)
 		state_final_wop.assignProperty(self.JBListItem,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_final_wop.assignProperty(self.JBListItem,"visible",0.0)
 
@@ -299,20 +305,12 @@ class Main(QtGui.QGraphicsView):
 		#transition13 : state_initial_wop to state_final_wop
 		t13 = state_initial_wop.addTransition(self.albumGrid.selected,state_final_wop)
 
-
-		
-		
-
-
 		self.machine.setInitialState(state_initial_wop)
 
 
 		self.machine.start()
 
 		self.setScene(self.graphicsscene)
-
-		
-
 
 
 	def artistslot(self):
@@ -331,8 +329,6 @@ class Main(QtGui.QGraphicsView):
 	      #self.backButton.show()
 	      print " artist slot ends"     
 	         
-	
-
 	def genreslot(self):
 	      print " genre slot begin"
 	      self.genrelistopen = True
@@ -354,22 +350,11 @@ class Main(QtGui.QGraphicsView):
 	      #self.backButton.show()
 	      print " genre slot ends" 
 	          
-	
-
-   	 
 	def backslot(self):
-	      #print " back slot beg"
 	      if self.artistlistopen == True :
 	         self.artistlistopen = False        
 	      else :
 	         self.genrelistopen = False
-	      #self.JBListItem.close()
-	      #self.genreButton.show()
-	      #self.scanButton.show()  
-	      #self.artistButton.show()
-	      #self.buttons.backButton.close()
-	      
-	      #print " back slot  ends"
 	     
 	def listslot(self) :
 	      print " list slot begin"
@@ -388,18 +373,14 @@ class Main(QtGui.QGraphicsView):
 	            self.stack.push("artist",artist)
 	            print artist + '  artist'
 	            print " list slot else ends"
-	         #self.backslot()                  uncommment this.........
-	      print "list slot end"
 	 
-	
-	
 	def albumslot(self,albumname):
-	      songlist = self.cache.getSongItemList(albumname)
-	      print songlist
+	      songlist = self.cache.getSongItemList(albumname,self.navigator.getText())
+	      print songlist 
 	      self.songGrid.updatelist(songlist)
-	      self.songGrid.setMinimumWidth(1000)
-	      self.albumGrid.setMaximumWidth(1)
-	      self.songGrid.show()  
+	      #self.songGrid.setMinimumWidth(1000)
+	      #self.albumGrid.setMaximumWidth(1)
+	      #self.songGrid.show()  
 	      #self.albumGrid.close()
 	
 	   
@@ -409,10 +390,11 @@ class Main(QtGui.QGraphicsView):
                self.albumGrid.updatelist(albumlist)
                print "refresh"
 
+
         def getStateSlot1(self):
              self.state = 1
              self.navigator.refresh() 
-        
+
         def getStateSlot2(self):
              self.state = 2   
         
@@ -430,8 +412,6 @@ class Main(QtGui.QGraphicsView):
         def getStateSlot6(self):
              self.state = 6
  
-
-
         def navigatorTextSlot(self,name):
 	     print " navigator "+ name
              print self.state
@@ -441,10 +421,11 @@ class Main(QtGui.QGraphicsView):
                  if(self.genrelistopen == True):
                     self.genreslot()
                  else:
-                    self.artistslot()   
-             
-               
-          
+                    self.artistslot() 
+                    
+                    
+                    
+                      
 if __name__ == '__main__':
 	app = QtGui.QApplication(sys.argv)
 	app.setApplicationName('JukeBox')
@@ -458,9 +439,10 @@ if __name__ == '__main__':
         app.connect(q.JBListItem ,QtCore.SIGNAL('itemSelectionChanged ()'),q.listslot)
         app.connect(q.stack ,QtCore.SIGNAL('updated'),q.refresh)
         app.connect(q.albumGrid , QtCore.SIGNAL('selected(PyQt_PyObject)'),q.albumslot)
+        #q.albumGrid.selected.connect(q.albumslot)
         app.connect(q.navigator , QtCore.SIGNAL('textChanged(PyQt_PyObject)'),q.navigatorTextSlot)
 
-##############################################	
+############################################	
 
 
 

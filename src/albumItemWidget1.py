@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*-
 import sys
 from PyQt4 import QtGui,QtCore
-#from cache1 import *
 import song
 import ClickableLabel
 
@@ -19,7 +19,7 @@ class albumItemWidget(QtGui.QWidget):
       self.label = album
       self.setObjectName((_fromUtf8("topwidget")))
       self.setGeometry(300,300,250,175) # size position
-      self.setMaximumSize(250,175)
+      self.setMaximumSize(175,175)
       self.setStyleSheet(_fromUtf8("#topwidget{background-color: rgba(255,255,255,0);}"))
       self.labelLayout = QtGui.QVBoxLayout(self)
       self.albumLabel  = QtGui.QLabel(album)
@@ -56,10 +56,15 @@ class albumItemWidget(QtGui.QWidget):
       self.imageLabel.setPixmap(self.albumart.scaled(150,150))
       print "selected slot from albumitemwidget "
       self.selected.emit(self.label)
+      self.selected.connect(self.test)
       #self.emit(QtCore.SIGNAL('selected(PyQt_PyObject)'),self.label)
-      print "ok" + self.label
-  
+      #print "ok" + self.label
+      #self.connect(self,QtCore.SIGNAL("selected(PyQt_PyObject)"),self.test)
 
+
+   def test(self, lama):
+      print "kollpaaa"
+      
 
  # def glowOnClick(self)  // will define later 
  
