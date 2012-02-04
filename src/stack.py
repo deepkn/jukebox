@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 from PyQt4 import QtGui,QtCore
 from stackUi import Ui_Form
@@ -5,6 +6,8 @@ import time
 
 class stackBar(QtGui.QWidget):
 
+        backButtonClicked = QtCore.pyqtSignal()
+        
 	def __init__(self):
 		
 		QtGui.QWidget.__init__(self)
@@ -40,6 +43,7 @@ class stackBar(QtGui.QWidget):
                 self.labeldict[category].show()
 		self.stackupdate()
 	def pop(self):
+	        self.backButtonClicked.emit()
 		try:
 			category=self.categorylist.pop()
 			val=self.stackstate[category]

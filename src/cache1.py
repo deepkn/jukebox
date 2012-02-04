@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import kaa.metadata.audio.eyeD3 as eyeD3
 import os
 import sqlite3
@@ -137,43 +138,15 @@ class cache:
                         row[1],row[2],row[3],row[4],row[5],row[6],
                         row[7],row[8],row[9],row[10],row[11],row[12],
                         row[13],row[14],row[0] ) 
-             #print "kkkkkk"
-             #print row[0]
-             #print os.path.dirname(row[0]).replace('/','_')
-	     #print "kkkkkkkkkkkkkkkkkkkkkkkk"
-             #for i in range(15):
-             #  print row[i] 
-             #  print i
-            
-             #for i in range(15):
-             #  print crow[i] 
-             #  print i
-
-
-
-
-
-
+          
             
              c.execute("""insert into CachedList values 
                           ( ?,?,?,?,?,?,?,?,?,?,?,?,?,?
                           ,? )""",crow)
                         
-            
-	     #c.execute(""" insert into {0} values   
-             #      ( '{1}','{2}','{3}','{4}',{5},{6},'{7}',{8},
-             #        '{9}','{10}','{11}','{12}','{13}','{14}' ,'{15}' )""".format(
-             #           os.path.dirname(row[14]).replace('/','_'),
-             #           row[1],row[2],row[3],row[4],row[5],row[6],
-             #           row[7],row[8],row[9],row[10],row[11],row[12],
-             #           row[13],row[14],row[0] ) )                        
-             
-             #except : pass        
-	     conn.commit()
+             conn.commit()
 	     print " properly inserted "  # todo not needed step #
-	#c.execute("select * from %s" %os.path.dirname(songname).replace('/','_') )
-	#r = c.fetchone()
-	#print r
+
 
    def insert_folder( self , foldername) :
        file_list = filter( lambda n : n.endswith(".mp3") or n.endswith(".ogg") or n.endswith(".flac") ,os.listdir(foldername) )
@@ -254,7 +227,7 @@ class cache:
       conn = self.connectDB()
       c    = conn.cursor()
                
-      c.execute( """ SELECT filename,title,image_path FROM CachedList 
+      c.execute( """ SELECT distinct filename,title,image_path FROM CachedList 
  		     WHERE album = "{0}" AND title LIKE "%{1}%" ORDER BY title """.format(album,string)) 
       
       songitemlist = []

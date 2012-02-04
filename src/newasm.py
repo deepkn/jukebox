@@ -32,24 +32,17 @@ class Main(QtGui.QGraphicsView):
 		self.graphicsscene = QtGui.QGraphicsScene(self)
 		self.bg = QtGui.QPixmap("/home/nikhcc/mp3.jpg")
 		self.bgbrush = QtGui.QBrush(self.bg)
-		#self.bgbrush.setTexture(self.bg)
 		self.graphicsscene.setSceneRect(0,0,self.width-50,self.height-60)
 		self.setBackgroundBrush(self.bgbrush)
-
                 self.artistlistopen = False
                 self.genrelistopen  = False
                 self.songlistopen   = False
                 self.listslotvalidity  = True
 		self.albumlistopen = True
-       
-
 		self.cache = cache1.cache() 
    		self.albumlist = self.cache.getAlbumItemList(None,None,'')
                 self.songlist = self.cache.getSongItemList(" ","")
    		li = [('kio','lop'),('kol','koi')]
-
-#################################################################################################
-
 		self.albumGrid = albumItemListWidget.albumItemListWidget(self.albumlist)
                 self.songGrid = songItemListWidget.songItemListWidget(self.songlist)
                 
@@ -109,7 +102,7 @@ class Main(QtGui.QGraphicsView):
 		self.connect(state_final_wp ,QtCore.SIGNAL('propertiesAssigned ()'),self.getStateSlot6)
 
 
-		#initial state with player
+          #initial state with player
                 state_initial_wop.assignProperty(self,"state",2)
 		state_initial_wp.assignProperty(self.nbutton,"text","Hide Player")
 		state_initial_wp.assignProperty(self.artistButton,"text","Artist")
@@ -133,7 +126,7 @@ class Main(QtGui.QGraphicsView):
 		state_initial_wp.assignProperty(self.JBListItem,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_initial_wp.assignProperty(self.JBListItem,"visible",0.0)
 
-		#initial state without player
+         #initial state without player
                 state_initial_wop.assignProperty(self,"state",2)
 		state_initial_wop.assignProperty(self.nbutton,"text","Show Player")
 		state_initial_wop.assignProperty(self.artistButton,"text","Artist")
@@ -152,12 +145,13 @@ class Main(QtGui.QGraphicsView):
 		state_initial_wop.assignProperty(self.albumGrid,"opacity",1.0)
 		state_initial_wop.assignProperty(self.albumGrid,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_initial_wop.assignProperty(self.albumGrid,"visible",1.0)
+		state_initial_wop.assignProperty(self.songGrid,"opacity",0.0)
 		state_initial_wop.assignProperty(self.songGrid,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_initial_wop.assignProperty(self.songGrid,"visible",0.0)
 		state_initial_wop.assignProperty(self.JBListItem,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_initial_wop.assignProperty(self.JBListItem,"visible",0.0)
 		
-		#intermediate state with player
+         #intermediate state with player
                 state_initial_wop.assignProperty(self,"state",2)
 		state_inter_wp.assignProperty(self.nbutton,"text","Hide Player")
 		state_inter_wp.assignProperty(self.artistButton,"text","Artist")
@@ -197,9 +191,11 @@ class Main(QtGui.QGraphicsView):
 		state_inter_wop.assignProperty(self.player,"opacity",0.0)
 		state_inter_wop.assignProperty(self.nbutton,"opacity",1.0)
 		state_inter_wop.assignProperty(self.navigator,"opacity",1.0)
+		
 		state_inter_wop.assignProperty(self.albumGrid,"opacity",1.0)
 		state_inter_wop.assignProperty(self.albumGrid,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_inter_wop.assignProperty(self.albumGrid,"visible",0.0)
+		
 		state_inter_wop.assignProperty(self.songGrid,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_inter_wop.assignProperty(self.songGrid,"visible",0.0)
 		state_inter_wop.assignProperty(self.JBListItem,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
@@ -221,9 +217,11 @@ class Main(QtGui.QGraphicsView):
 		state_final_wp.assignProperty(self.player,"opacity",1.0)
 		state_final_wp.assignProperty(self.nbutton,"opacity",1.0)
 		state_final_wp.assignProperty(self.navigator,"opacity",1.0)
-		#state_final_wp.assignProperty(self.albumGrid,"opacity",1.0)
-		#state_final_wp.assignProperty(self.albumGrid,"geometry",QtCore.QRect((self.width/4)-100,300,750,400))
-		#state_final_wp.assignProperty(self.albumGrid,"visible",0.0)
+		
+		state_final_wp.assignProperty(self.albumGrid,"opacity",1.0)
+		state_final_wp.assignProperty(self.albumGrid,"geometry",QtCore.QRect((self.width/4)-100,300,750,400))
+		state_final_wp.assignProperty(self.albumGrid,"visible",0.0)
+		
 		state_final_wp.assignProperty(self.songGrid,"geometry",QtCore.QRect((self.width/4)-100,300,750,400))
 		state_final_wp.assignProperty(self.songGrid,"visible",1.0)
                 state_final_wp.assignProperty(self.songGrid,"opacity",1.0)
@@ -245,9 +243,11 @@ class Main(QtGui.QGraphicsView):
 		state_final_wop.assignProperty(self.player,"opacity",0.0)
 		state_final_wop.assignProperty(self.nbutton,"opacity",1.0)
 		state_final_wop.assignProperty(self.navigator,"opacity",1.0)
+		
 		state_final_wop.assignProperty(self.albumGrid,"opacity",0.0)
 		state_final_wop.assignProperty(self.albumGrid,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_final_wop.assignProperty(self.albumGrid,"visible",0.0)
+		
 		state_final_wop.assignProperty(self.songGrid,"geometry",QtCore.QRect((self.width/4)-100,0,750,700))
 		state_final_wop.assignProperty(self.songGrid,"visible",1.0)
                 state_final_wop.assignProperty(self.songGrid,"opacity",1.0)
@@ -304,7 +304,14 @@ class Main(QtGui.QGraphicsView):
 		t12 = state_inter_wp.addTransition(self.JBListItem.itemSelectionChanged,state_initial_wp)
 		#transition13 : state_initial_wop to state_final_wop
 		t13 = state_initial_wop.addTransition(self.albumGrid.selected,state_final_wop)
-
+                #transition14 : state_initial_wp to state_final_wp
+                t14 = state_initial_wp.addTransition(self.albumGrid.selected,state_final_wp)
+                
+                t15 = state_final_wop.addTransition(self.stack.backButtonClicked,state_initial_wop)
+                
+                t15 = state_final_wp.addTransition(self.stack.backButtonClicked,state_initial_wp)
+                
+                
 		self.machine.setInitialState(state_initial_wop)
 
 
@@ -331,24 +338,13 @@ class Main(QtGui.QGraphicsView):
 	         
 	def genreslot(self):
 	      print " genre slot begin"
-	      self.genrelistopen = True
-	   
+	      self.genrelistopen = True	   
 	      stackstate = self.stack.getState()
 	      self.k = self.cache.getGenreList(stackstate["artist"],self.navigator.getText())
-	      
-	         
 	      self.listslotvalidity  = False
 	      self.JBListItem.updatelist(self.k)# thinks signal is genrated inside this...
 	      self.listslotvalidity  = True
-              	     
-              
-	      #self.JBListItem.show()
-	    
-	      #self.artistButton.close()
-	      #self.genreButton.close()
-	      #self.scanButton.close()
-	      #self.backButton.show()
-	      print " genre slot ends" 
+             
 	          
 	def backslot(self):
 	      if self.artistlistopen == True :
@@ -357,32 +353,22 @@ class Main(QtGui.QGraphicsView):
 	         self.genrelistopen = False
 	     
 	def listslot(self) :
-	      print " list slot begin"
 	      if self.listslotvalidity  == True:
 	         if self.genrelistopen == True :
-	            print "  slot if begin"
+	           
 	            index = self.JBListItem.currentRow() 
 	            genre = self.JBListItem.getdata(index)
-	            self.stack.push("genre",genre)
-	            print genre + '  genre'
-	            print " list slot if ends"
-	         else  :
-	            print " list slot else big"
+	            self.stack.push("genre",genre)	            
+	         else  :	          
 	            index = self.JBListItem.currentRow() 
 	            artist = self.JBListItem.getdata(index)
 	            self.stack.push("artist",artist)
-	            print artist + '  artist'
-	            print " list slot else ends"
-	 
+	         	 
 	def albumslot(self,albumname):
 	      songlist = self.cache.getSongItemList(albumname,self.navigator.getText())
 	      print songlist 
 	      self.songGrid.updatelist(songlist)
-	      #self.songGrid.setMinimumWidth(1000)
-	      #self.albumGrid.setMaximumWidth(1)
-	      #self.songGrid.show()  
-	      #self.albumGrid.close()
-	
+	      self.stack.push("album",albumname)
 	   
         def refresh(self):		
 	       stackstate = self.stack.getState()
@@ -398,7 +384,7 @@ class Main(QtGui.QGraphicsView):
         def getStateSlot2(self):
              self.state = 2   
         
-        def getStateSlot3(self):
+        def getStateSlot3(self):	  
              self.state = 3
              self.navigator.refresh()
         
@@ -413,7 +399,6 @@ class Main(QtGui.QGraphicsView):
              self.state = 6
  
         def navigatorTextSlot(self,name):
-	     print " navigator "+ name
              print self.state
              if(self.state == 1 or self.state == 2):			
                  self.refresh()    
@@ -441,39 +426,5 @@ if __name__ == '__main__':
         app.connect(q.albumGrid , QtCore.SIGNAL('selected(PyQt_PyObject)'),q.albumslot)
         #q.albumGrid.selected.connect(q.albumslot)
         app.connect(q.navigator , QtCore.SIGNAL('textChanged(PyQt_PyObject)'),q.navigatorTextSlot)
-
-############################################	
-
-
-
-
-
-	"""state1 = QtCore.QState(q.machine)
-	state2 = QtCore.QState(q.machine)
-	q.machine.setInitialState(state1)
-	state1.assignProperty(q.nbutton,"text","Show Navigation Pad")
-	state1.assignProperty(q.player,"geometry",QtCore.QRectF((q.width/2)-200,(q.height/2)-75,400,150)
-	state1.assignProperty(q.nbutton,"pos",QtCore.QPointF(10,q.height-55))
-	state1.assignProperty(q.navigator,"geometry",QtCore.QRectF(q.width,q.height,500,500)
-	state1.assignProperty(q.player,"opacity",qreal(1))
-	state1.assignProperty(q.nbutton,"opacity",qreal(1))
-	state1.assignProperty(q.navigator,"opacity",qreal(0))
-	state2.assignProperty(q.nbutton,"text","Show Player")
-	state2.assignProperty(q.navigator,"geometry",QtCore.QRectF((q.width/2)-200,(q.height/2)-75,500,500)
-	state2.assignProperty(q.nbutton,"pos",QtCore.QPointF(q.width-110,q.height-55))
-	state2.assignProperty(q.player,"geometry",QtCore.QRectF(0,self.height,400,150)
-	state1.assignProperty(q.player,"opacity",qreal(0))
-	state1.assignProperty(q.nbutton,"opacity",qreal(1))
-	state1.assignProperty(q.navigator,"opacity",qreal(1))
-
-	t1 = state1.addTransition(q.nbutton,SIGNAL(clicked()),state2)
-	t1.addAnimaton(QtCore.QPropertyAnimation(q.navigator,"geometry")
-	t1.addAnimation(QtCore.QPropertyAnimation(q.nbutton,"geometry")
-	t1.addAnimaton(QtCore.QPropertyAnimation(q.navigator,"opacity")
-	t2 = state2.addTransition(q.nbutton,SIGNAL(clicked()),state1)
-	t1.addAnimaton(QtCore.QPropertyAnimation(q.player,"geometry")
-	t1.addAnimation(QtCore.QPropertyAnimation(q.nbutton,"geometry")
-	t1.addAnimaton(QtCore.QPropertyAnimation(q.player,"opacity")
-	q.machine.start()"""
 	q.show()
 	sys.exit(app.exec_())

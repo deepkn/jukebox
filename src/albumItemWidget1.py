@@ -56,7 +56,7 @@ class albumItemWidget(QtGui.QWidget):
       self.imageLabel.setPixmap(self.albumart.scaled(150,150))
       print "selected slot from albumitemwidget "
       self.selected.emit(self.label)
-      self.selected.connect(self.test)
+      #self.selected.connect(self.test)
       #self.emit(QtCore.SIGNAL('selected(PyQt_PyObject)'),self.label)
       #print "ok" + self.label
       #self.connect(self,QtCore.SIGNAL("selected(PyQt_PyObject)"),self.test)
