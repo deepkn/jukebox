@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 from PyQt4 import QtGui,QtCore
 from cache1 import *
@@ -29,13 +30,13 @@ class JBMainWidget(QtGui.QWidget):
       QtGui.QWidget.__init__(self)
       
       self.cach = cache()
-      albumlist = self.cach.getAlbumItemList(None,None)
+      albumlist = self.cach.getAlbumItemList(None,None,"")
       self.albumListview = albumItemListWidget(albumlist)
-      self.songListview  = songItemListWidget([])
+      self.songListview  = albumItemListWidget([])
       self.player = PlayerWidget()      
       self.player.close()
       self.songListview.close()
-      self.albumListview.setMinimumWidth(1200) 
+      self.albumListview.setMinimumWidth(1000) 
       self.songListview.setMaximumWidth(1) 
       self.buttons = JBButtons()
       self.k = []  
@@ -53,6 +54,7 @@ class JBMainWidget(QtGui.QWidget):
 
       self.artistlistopen = False
       self.genrelistopen  = False
+      self.songlistopen = False
       self.listslotvalidity  = True
       self.buttons.backButton.close()
 
@@ -60,7 +62,7 @@ class JBMainWidget(QtGui.QWidget):
       print " artist slot begin"
       self.artistlistopen = True
       stackstate = self.stackbar.getState()
-      self.k = self.cach.getArtistList(stackstate["genre"])
+      self.k = self.cach.getArtistList(stackstate["genre"],"")
       self.listslotvalidity  = False
       self.listWidget.updatelist(self.k)# thinks signal is genrated inside this...
       self.listslotvalidity  = True
@@ -75,18 +77,13 @@ class JBMainWidget(QtGui.QWidget):
 
    def genreslot(self):
       print " genre slot begin"
-      self.genrelistopen = True
-   
+      self.genrelistopen = True   
       stackstate = self.stackbar.getState()
-      self.k = self.cach.getGenreList(stackstate["artist"])
-      
-         
+      self.k = self.cach.getGenreList(stackstate["artist"],"")         
       self.listslotvalidity  = False
       self.listWidget.updatelist(self.k)# thinks signal is genrated inside this...
-      self.listslotvalidity  = True
-     
-      self.listWidget.show()
-    
+      self.listslotvalidity  = True     
+      self.listWidget.show()    
       self.buttons.artistButton.close()
       self.buttons.genreButton.close()
       self.buttons.scanButton.close()
@@ -135,19 +132,21 @@ class JBMainWidget(QtGui.QWidget):
 
 
    def albumslot(self,albumname):
-      songlist = self.cach.getSongItemList(albumname)
-      print songlist
-      self.songListview.updatelist(songlist)
-      self.songListview.setMinimumWidth(1000)
-      self.albumListview.setMaximumWidth(1)
-      self.songListview.show()  
-      self.albumListview.close()
+      print " album slot begin "
+      if self.songlistopen == False :
+         print "album slot if begins "
+         self.songlistopen = True
+         songlist = self.cach.getSongItemList(albumname,"")
+         print songlist
+         self.albumListview.updatelist(songlist)
+         print "album slot if ends "
+      else : 
+         print "album slot else begins "        
+      	 self.player.openFile(albumname)
+         self.player.show()
+         print "album slot else ends "
 
-   def songslot(self,songpath):
       
-      self.player.openFile(songpath)
-      self.player.show()
-
    
 ########## algo ###################
  
@@ -160,11 +159,13 @@ class JBMainWidget(QtGui.QWidget):
    def scanslot(self): 
       dir_list=QtGui.QFileDialog.getExistingDirectory(self,'Select Folder','/home',QtGui.QFileDialog.ShowDirsOnly)
       print dir_list
-      return dir_list
+      self.cach.insert_folder( dir_list)
+      
 ##### todo ######
 
-# scanslot
-# songslot
+# bugs
+# navigation
+#lyrics
 
  #########
 
@@ -178,7 +179,7 @@ if __name__ == "__main__":
    app.connect(ob.listWidget ,QtCore.SIGNAL('itemSelectionChanged ()'),ob.listslot)
    app.connect(ob.stackbar ,QtCore.SIGNAL('updated'),ob.refresh)
    app.connect(ob.albumListview , QtCore.SIGNAL('selected(PyQt_PyObject)'),ob.albumslot)
-   app.connect(ob.songListview , QtCore.SIGNAL('selected(PyQt_PyObject)'),ob.songslot)
+   #app.connect(ob.songListview , QtCore.SIGNAL('selected(PyQt_PyObject)'),ob.songslot)
    ob.show()
 
    app.exec_()

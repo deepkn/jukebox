@@ -56,7 +56,9 @@ class albumItemListWidget(QtGui.QWidget):
      self.ob.selected.connect(self.selectedSlot)
      
   def updatelist(self,albumItemList):
-     self.scrolarea.close()
+     self.scrolarea.hide()
+     self.ob.close()
+     self.layout.removeWidget(self.scrolarea)
      self.ob = albumItemGrid(albumItemList)
      sk =  QtGui.QScrollArea()
      self.ob.setStyleSheet("background: transparent;")

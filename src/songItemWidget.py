@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 from PyQt4 import QtGui,QtCore
 from cache1 import *
@@ -6,6 +7,9 @@ import song
 
 class songItemWidget(albumItemWidget):
   
+  
+   selected = QtCore.pyqtSignal(str)
+   
    def __init__(self,filename,title,image):    
       albumItemWidget.__init__(self,title,image)
       self.file = filename

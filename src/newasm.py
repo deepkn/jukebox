@@ -317,7 +317,6 @@ class Main(QtGui.QGraphicsView):
 		self.machine.start()
 		self.setScene(self.graphicsscene)
 
-
 	def artistslot(self):
 	      self.artistlistopen = True
 	      stackstate = self.stack.getState()
@@ -333,8 +332,7 @@ class Main(QtGui.QGraphicsView):
 	      self.listslotvalidity  = False
 	      self.JBListItem.updatelist(self.k)# thinks signal is genrated inside this...
 	      self.listslotvalidity  = True
-             
-	          
+             	          
 	def backslot(self):
 	      if self.artistlistopen == True :
 	         self.artistlistopen = False        
@@ -365,7 +363,6 @@ class Main(QtGui.QGraphicsView):
                self.albumGrid.updatelist(albumlist)
                print "refresh"
 
-
         def getStateSlot1(self):
              self.state = 1
              self.navigator.refresh() 
@@ -387,6 +384,7 @@ class Main(QtGui.QGraphicsView):
         def getStateSlot6(self):
              self.state = 6
  
+  
         def navigatorTextSlot(self,name):
              print self.state
              if(self.state == 1 or self.state == 2):			
@@ -394,29 +392,34 @@ class Main(QtGui.QGraphicsView):
              if(self.state == 3 or self.state == 4):			
                  if(self.genrelistopen == True):
                     self.genreslot()
-                 else:
-                    self.artistslot() 
+                 if(self.artistlistopen == True):
+                    self.artistslot()
              if(self.state == 5 or self.state == 6):
 	         stackstate = self.stack.getState()
 	         self.albumslot(stackstate["album"])
-                 
-                    
-                    
-                      
+
+
+        def scanSlot(self): 
+             dir_list=QtGui.QFileDialog.getExistingDirectory(self,'Select Folder','/home',QtGui.QFileDialog.ShowDirsOnly)
+             print dir_list
+             self.cache.insert_folder( dir_list)
+      
+        def songSlot(self,filename):
+	     print " da ividam vare ethi pinjenda work avathe...?"  
+             self.player.openFile(filename)
+
+
 if __name__ == '__main__':
 	app = QtGui.QApplication(sys.argv)
 	app.setApplicationName('JukeBox')
 	q = Main()
-###########################################3
-
         app.connect(q.artistButton ,QtCore.SIGNAL('clicked()'),q.artistslot)
         app.connect(q.genreButton ,QtCore.SIGNAL('clicked()'),q.genreslot)
-   	#app.connect(q.backButton ,QtCore.SIGNAL('pressed()'),q.backslot)
-
         app.connect(q.JBListItem ,QtCore.SIGNAL('itemSelectionChanged ()'),q.listslot)
         app.connect(q.stack ,QtCore.SIGNAL('updated'),q.refresh)
         app.connect(q.albumGrid , QtCore.SIGNAL('selected(PyQt_PyObject)'),q.albumslot)
-        #q.albumGrid.selected.connect(q.albumslot)
+        app.connect(q.songGrid , QtCore.SIGNAL('selected(PyQt_PyObject)'),q.songSlot)
         app.connect(q.navigator , QtCore.SIGNAL('textChanged(PyQt_PyObject)'),q.navigatorTextSlot)
+        app.connect(q.scanButton , QtCore.SIGNAL('clicked()'),q.scanSlot)
 	q.show()
 	sys.exit(app.exec_())

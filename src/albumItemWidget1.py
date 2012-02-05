@@ -57,7 +57,7 @@ class albumItemWidget(QtGui.QWidget):
       print "selected slot from albumitemwidget "
       self.selected.emit(self.label)
       #self.selected.connect(self.test)
-      #self.emit(QtCore.SIGNAL('selected(PyQt_PyObject)'),self.label)
+      self.emit(QtCore.SIGNAL('selected(PyQt_PyObject)'),self.label)
       #print "ok" + self.label
       #self.connect(self,QtCore.SIGNAL("selected(PyQt_PyObject)"),self.test)
 

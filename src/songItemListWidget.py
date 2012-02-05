@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import sys
 from PyQt4 import QtGui,QtCore
 from cache1 import *
@@ -16,9 +17,9 @@ class songItemGrid(QtGui.QWidget):
         i = i + 1
 
      
-  def selected(self,albumname):
-     print "selected from song item grid " + albumname
-     self.emit(QtCore.SIGNAL("selected(PyQt_PyObject)"),albumname)
+  def selected(self,filename):
+     print "selected from song item grid " + filename
+     self.emit(QtCore.SIGNAL("selected(PyQt_PyObject)"),filename)
      print "jiko"
 
 class songItemListWidget(QtGui.QWidget):
@@ -43,7 +44,7 @@ class songItemListWidget(QtGui.QWidget):
       sk.setWidget(self.ob)
       self.scrolarea = sk
       self.layout.addWidget(self.scrolarea)
-  
+      self.connect(self.ob,QtCore.SIGNAL("selected(PyQt_PyObject)"),self.selected)
    
    def selected(self,albumname):
      print " song item list widget "+ albumname
