@@ -34,6 +34,11 @@ class Main(QtGui.QGraphicsView):
 		self.bgbrush = QtGui.QBrush(self.bg)
 		self.graphicsscene.setSceneRect(0,0,self.width-50,self.height-60)
 		self.setBackgroundBrush(self.bgbrush)
+		#self.k = [1,3]
+		self.artistScrolLevel = 0
+		self.genreScrolLevel = 0
+		self.albumScrolLevel = 0
+		self.songScrolLevel = 0
                 self.artistlistopen = False
                 self.genrelistopen  = False
                 self.songlistopen   = False
@@ -318,19 +323,21 @@ class Main(QtGui.QGraphicsView):
 		self.setScene(self.graphicsscene)
 
 	def artistslot(self):
+	      self.genrelistopen = False 
 	      self.artistlistopen = True
 	      stackstate = self.stack.getState()
 	      self.k = self.cache.getArtistList(stackstate["genre"],self.navigator.getText())
 	      self.listslotvalidity  = False
-	      self.JBListItem.updatelist(self.k)# thinks signal is genrated inside this...
+	      self.JBListItem.updatelist(self.k[self.artistScrolLevel:self.artistScrolLevel+10])# thinks signal is genrated inside this...
 	      self.listslotvalidity  = True
 	         
 	def genreslot(self):
-	      self.genrelistopen = True	   
+	      self.genrelistopen = True	 
+	      self.artistlistopen = False
 	      stackstate = self.stack.getState()
 	      self.k = self.cache.getGenreList(stackstate["artist"],self.navigator.getText())
 	      self.listslotvalidity  = False
-	      self.JBListItem.updatelist(self.k)# thinks signal is genrated inside this...
+	      self.JBListItem.updatelist(self.k[self.genreScrolLevel:self.genreScrolLevel+10])# thinks signal is genrated inside this...
 	      self.listslotvalidity  = True
              	          
 	def backslot(self):
@@ -352,15 +359,15 @@ class Main(QtGui.QGraphicsView):
 	            self.stack.push("artist",artist)
 	         	 
 	def albumslot(self,albumname):
-	      songlist = self.cache.getSongItemList(albumname,self.navigator.getText())
-	      print songlist 
-	      self.songGrid.updatelist(songlist)
+	      self.songlist = self.cache.getSongItemList(albumname,self.navigator.getText())
+	      print self.songlist 
+	      self.songGrid.updatelist(self.songlist[self.songScrolLevel:self.songScrolLevel+10])
 	      self.stack.push("album",albumname) #  check   
 	   
         def refresh(self):		
 	       stackstate = self.stack.getState()
- 	       albumlist  = self.cache.getAlbumItemList(stackstate["genre"],stackstate["artist"],self.navigator.getText())
-               self.albumGrid.updatelist(albumlist)
+ 	       self.albumlist  = self.cache.getAlbumItemList(stackstate["genre"],stackstate["artist"],self.navigator.getText())
+               self.albumGrid.updatelist(self.albumlist[self.albumScrolLevel:self.albumScrolLevel+10])
                print "refresh"
 
         def getStateSlot1(self):
@@ -408,6 +415,82 @@ class Main(QtGui.QGraphicsView):
 	     print " da ividam vare ethi pinjenda work avathe...?"  
              self.player.openFile(filename)
 
+        def directionSlot(self,text):
+	    # print text
+	     if(text == "up"):
+	         if(self.artistlistopen ==True):
+		     if(self.artistScrolLevel > 0):
+			 self.artistScrolLevel -= 10
+			 self.artistslot()
+	          
+	         if(self.genrelistopen ==True):
+		      if(self.genreScrolLevel > 0):
+			 self.genreScrolLevel -= 10
+			 self.genreslot()
+		 
+		 if(self.state == 1):
+		     if(self.albumScrolLevel > 0):
+		         self.albumScrolLevel -=2
+		         		 
+		 if(self.state == 2):
+		     if(self.albumScrolLevel > 0):
+		         self.albumScrolLevel -=2
+		 
+	         #if(self.scrolLevel >0):
+	          #   self.scrolLevel -= 1;
+	          #   if(self.artistlistopen ==True):
+	           #      self.artistslot()
+	           #  if(self.genrelistopen ==True):
+	           #      self.genreslot()
+	          # print "ko"
+	          
+	          
+	     if(text == "down"):
+	         #self.scrolLevel += 1; 
+	         #print self.scrolLevel
+	         if(self.artistlistopen ==True):
+		     if(self.artistScrolLevel < (self.k.index(self.k[-1])-10)):
+			 self.artistScrolLevel += 10
+			 self.artistslot()
+			 #print self.artistScrolLevel
+	          
+	         if(self.genrelistopen ==True):
+		      if(self.genreScrolLevel < (self.k.index(self.k[-1])-10)):
+			 self.genreScrolLevel += 10
+			 self.genreslot()
+			
+	         	         
+	         if(self.state == 1):
+		     if(self.albumScrolLevel < (self.albumlist.index(self.albumlist[-1])-10)):
+			 self.albumScrolLevel += 1
+			 self.refresh()
+			 print self.albumScrolLevel
+	          
+	         if(self.state == 2):
+		      if(self.albumScrolLevel < (self.albumlist.index(self.albumlist[-1])-10)):
+			 self.albumScrolLevel += 1
+			 self.refresh()
+			 print self.albumScrolLevel
+			 
+	         	         
+	         if(self.state == 3):
+		     if(self.songScrolLevel < (self.songlist.index(self.songlist[-1])-10)):
+			 self.songScrolLevel += 1
+			 self.albumslot()
+			 #print self.albumScrolLevel
+	          
+	         if(self.state == 4):
+		      if(self.songScrolLevel < (self.songlist.index(self.songlist[-1])-10)):
+			 self.songScrolLevel += 1
+			 self.albumSlot()
+			 #print self.albumScrolLevel		 
+	         
+	        
+	#def downSlot():
+	 #    self.scrolLevel--;
+            
+
+
 
 if __name__ == '__main__':
 	app = QtGui.QApplication(sys.argv)
@@ -420,6 +503,8 @@ if __name__ == '__main__':
         app.connect(q.albumGrid , QtCore.SIGNAL('selected(PyQt_PyObject)'),q.albumslot)
         app.connect(q.songGrid , QtCore.SIGNAL('selected(PyQt_PyObject)'),q.songSlot)
         app.connect(q.navigator , QtCore.SIGNAL('textChanged(PyQt_PyObject)'),q.navigatorTextSlot)
+        app.connect(q.navigator , QtCore.SIGNAL('textChanged(PyQt_PyObject)'),q.navigatorTextSlot)
         app.connect(q.scanButton , QtCore.SIGNAL('clicked()'),q.scanSlot)
+        app.connect(q.navigator , QtCore.SIGNAL('direction(PyQt_PyObject)'),q.directionSlot)
 	q.show()
 	sys.exit(app.exec_())

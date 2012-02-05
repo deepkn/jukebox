@@ -42,7 +42,7 @@ class albumItemListWidget(QtGui.QWidget):
      sk =  QtGui.QScrollArea()
      #self.scrolarea = QtGui.QScrollArea()
      self.ob = albumItemGrid(albumItemList)
-     self.ob.setStyleSheet("background: transparent;")
+     
      sk.setWidget(self.ob)
      self.scrolarea = sk
      self.scrolarea.setObjectName(_fromUtf8("scroll"))
